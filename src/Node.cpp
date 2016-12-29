@@ -2,9 +2,12 @@
 
 #include <vector>
 #include <map>
+#include <cstdint>
 
 #include "Node.h"
 #include "SuffixTree.h"
+
+uint32_t Node::instances = 0;
 
 Node::Node(Node* parent, int begin_index, int* end_index, int ID) {
   this->parent = parent;

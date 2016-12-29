@@ -28,6 +28,8 @@ class Node {
   int begin_index;
   int* end_index;
   int ID;
+public:
+  static uint32_t instances;
 };
 
 #endif   // SRC_NODE_H_
