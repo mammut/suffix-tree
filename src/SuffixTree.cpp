@@ -1,9 +1,12 @@
 // Copyright (c) 2012 Adam Serafini
 
+#include <cstdio>
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <cstdint>
 
 #include "SuffixTree.h"
 #include "Node.h"
@@ -22,7 +25,8 @@ SuffixTree::SuffixTree() {
   root = new Node(NULL, 1, current_end, internal_node_ID);
 }
 
-void SuffixTree::construct(std::string s) {
+void SuffixTree::construct(std::string s, std::string out) {
+  output = out;
   length = s.length();
   tree_string = s;
 
@@ -145,3 +149,46 @@ std::string SuffixTree::log_node(Node* parent) {
 
   return buffer.str();
 }
+
+void SuffixTree::dfuds(){
+  FILE *ascii = fopen( (output + ".ascii").c_str(), "wb");
+  FILE *letts = fopen( (output + ".letts").c_str(), "wb");
+
+  /** uint64_t :: Number of nodes */
+  uint64_t total_nodes = Node::instances;
+  fwrite(&total_nodes, sizeof(uint64_t), 1, letts);
+
+  /** uint32_t :: NULL char for initial DFUDS ( */
+  char n = 0;
+  fwrite(&n, sizeof(uint32_t), 1, letts);
+
+  /** uint8_t :: initial ( for DFUDS */
+  uint8_t p = '(';
+  fwrite(&p, sizeof(uint8_t), 1, ascii);
+
+  /** pruint64_t the tree */
+  dfuds(root, letts, ascii);
+  fclose(letts);
+  fclose(ascii);
+}
+
+void SuffixTree::dfuds(Node *parent, FILE *letts, FILE *ascii){
+  for (auto it = parent->children.begin(); it != parent->children.end(); it++) {
+    // Child nodes are stored on the parent node in a map of integers
+    // (it->first) to Node pointers (it->second).
+    Node* child_node = it->second;
+    uint8_t p = '(';
+    fwrite(&p, sizeof(uint8_t), 1, ascii);
+  }
+
+  uint8_t p = ')';
+  fwrite(&p, sizeof(uint8_t), 1, ascii);
+
+  for (auto it = parent->children.begin(); it != parent->children.end(); it++) {
+    Node *child_node = it->second;
+    uint32_t tmp = get_char_at_index(child_node->begin_index);
+    fwrite(&tmp, sizeof(uint32_t), 1, letts);
+    dfuds(child_node, letts, ascii);
+  }
+}
+

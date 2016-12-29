@@ -11,11 +11,13 @@ class Node;
 class SuffixTree {
  public:
   SuffixTree();
-  void construct(std::string);
+  void construct(std::string, std::string);
   std::string log_tree();
+  void dfuds();
   char get_char_at_index(int) const;
 
  private:
+  std::string output;
   std::string tree_string;
   std::string log_node(Node* parent);
   std::string get_substr(int, int);
@@ -33,6 +35,8 @@ class SuffixTree {
 
   // Apply Suffix Extension Rule 2 (Gusfield, 1997)
   void RULE2(Suffix&, int, int);
+
+  void dfuds(Node *nd, FILE *letts, FILE *ascii);
 
   Node* root;
   int internal_node_ID;
